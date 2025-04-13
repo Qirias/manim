@@ -1,7 +1,7 @@
 from manimlib import *
 import numpy as np
 
-class rc(Scene):
+class RadianceCascadesSPWI(Scene):
     def sign_not_zero(self, v):
         return 1.0 if v >= 0.0 else -1.0
 
