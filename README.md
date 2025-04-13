@@ -1,3 +1,13 @@
+## Fork Specific Changes
+
+This fork includes a visualization of **Radiance Cascades** using Screen Space Probes with World Space Intervals (SPWI).
+
+The `rc.py` file demonstrates how probe hierarchies interact across different resolution levels. To run the visualization:
+
+```bash
+manimgl rc.py rc -pl
+```
+
 <p align="center">
     <a href="https://github.com/3b1b/manim">
         <img src="https://raw.githubusercontent.com/3b1b/manim/master/logo/cropped.png">
