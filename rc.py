@@ -44,11 +44,15 @@ class RadianceCascadesSPWI(Scene):
                 directions.append(dir)
         return directions
 
-    def create_wireframe_sphere_with_rays(self, center, radius, sphere_color=RED, ray_color=YELLOW, ray_resolution=4):
+    def create_wireframe_sphere_with_rays(self, center, radius, cascadeLevel, sphere_color=RED, ray_color=YELLOW, ray_resolution=4, ray_length_multiplier=2.0, ray_start_offset=0.0):
         slices = 6
         stacks = 4
         sphere_group = VGroup()
         wireframe = VGroup()
+        pi4 = 12.56637
+        angular_factor = 4
+        c0_interval_count = 16
+        max_solid_angle = 0.005
 
         for i in range(stacks):
             theta1 = (i / stacks) * PI
@@ -71,10 +75,20 @@ class RadianceCascadesSPWI(Scene):
 
         directions = self.generate_uniform_directions(ray_resolution)
         rays = VGroup()
-        ray_length = radius * 2.0
+        ray_length = radius * ray_length_multiplier
+        base_interval_length = max_solid_angle * c0_interval_count / pi4
+
         for direction in directions:
-            start_point = center
-            end_point = center + ray_length * direction
+            # if (cascadeLevel is 0):
+            #     start_point = center * direction
+            #     end_point = center + base_interval_length * angular_factor * direction
+            # else:
+            #     start_scale = pow(angular_factor, cascadeLevel)
+            #     start_point = center + base_interval_length * start_scale * direction
+            #     end_point = center + base_interval_length * start_scale * angular_factor * direction
+            start_point = center + (ray_start_offset + radius) * direction
+            end_point = center + (ray_length + ray_start_offset) * direction
+
             ray = Arrow(start_point, end_point, buff=0, color=ray_color, stroke_width=0.4)
             rays.add(ray)
 
@@ -86,14 +100,14 @@ class RadianceCascadesSPWI(Scene):
         spacing_x = grid_width / cols
         spacing_y = grid_height / rows
         radius = min(spacing_x, spacing_y) / 5
-        z = 16
+        z = 0
         spheres = VGroup()
         for row in range(rows):
             for col in range(cols):
                 x = -grid_width / 2 + spacing_x / 2 + col * spacing_x
                 y = grid_height / 2 - spacing_y / 2 - row * spacing_y
                 center = np.array([x, y, z])
-                sphere = self.create_wireframe_sphere_with_rays(center, radius, PURPLE, BLUE, ray_resolution=16)
+                sphere = self.create_wireframe_sphere_with_rays(center, radius, 2, PURPLE, BLUE, ray_resolution=16, ray_length_multiplier=4, ray_start_offset=10)
                 spheres.add(sphere)
         return spheres
 
@@ -102,14 +116,14 @@ class RadianceCascadesSPWI(Scene):
         spacing_x = grid_width / cols
         spacing_y = grid_height / rows
         radius = min(spacing_x, spacing_y) / 6
-        z = 5
+        z = 0
         spheres = VGroup()
         for row in range(rows):
             for col in range(cols):
                 x = -grid_width / 2 + spacing_x / 2 + col * spacing_x
                 y = grid_height / 2 - spacing_y / 2 - row * spacing_y
                 center = np.array([x, y, z])
-                sphere = self.create_wireframe_sphere_with_rays(center, radius, BLUE, GREEN, ray_resolution=8)
+                sphere = self.create_wireframe_sphere_with_rays(center, radius, 1, PINK, GREEN, ray_resolution=8, ray_length_multiplier=3, ray_start_offset=4)
                 spheres.add(sphere)
         return spheres
 
@@ -125,7 +139,7 @@ class RadianceCascadesSPWI(Scene):
                 x = -grid_width / 2 + spacing_x / 2 + col * spacing_x
                 y = grid_height / 2 - spacing_y / 2 - row * spacing_y
                 center = np.array([x, y, z])
-                sphere = self.create_wireframe_sphere_with_rays(center, radius, RED, ORANGE, ray_resolution=4)
+                sphere = self.create_wireframe_sphere_with_rays(center, radius, 0, RED, ORANGE, ray_resolution=4, ray_length_multiplier=2.5, ray_start_offset=0)
                 spheres.add(sphere)
         return spheres
 
